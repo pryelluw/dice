@@ -1,16 +1,19 @@
-from random import randint
 from flask import Flask, jsonify
+from dice import Dice
+
 app = Flask(__name__)
 
 
-def roll():
-    return {idx: lambda a=idx: randint(1, a) for idx in range(2, 21)}[20]()
+@app.route('/<sides>')
+def roll_the_dice(sides):
+    try:
+        sides = int(sides)
+    except ValueError:
+        return jsonify({'roll': 0}), 400
 
-
-@app.route('/')
-def roll_the_dice():
+    dice = Dice(int(sides))
     return jsonify(
-        {'roll': roll()}
+        {'roll': dice.roll()}
     )
 
 
